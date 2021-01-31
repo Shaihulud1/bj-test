@@ -1,0 +1,63 @@
+FROM php:7.4-fpm
+
+
+RUN apt-get update && apt-get -y install wget bsdtar libaio1 && \
+ wget -qO- https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip | bsdtar -xvf- -C /usr/local && \
+ wget -qO- https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip | bsdtar -xvf-  -C /usr/local && \
+ wget -qO- https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip | bsdtar -xvf- -C /usr/local && \
+ ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
+ ln -s /usr/local/instantclient/libclntsh.so.* /usr/local/instantclient/libclntsh.so && \
+ ln -s /usr/local/instantclient/lib* /usr/lib && \
+ ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus && \
+ docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
+ docker-php-ext-install oci8 && \
+ rm -rf /var/lib/apt/lists/* && \
+ php -v
+
+RUN wget https://www.php.net/distributions/php-7.4.13.tar.gz && \
+    mkdir php_oci && \
+    mv php-7.4.13.tar.gz ./php_oci
+WORKDIR php_oci
+RUN tar xfvz php-7.4.13.tar.gz
+WORKDIR php-7.4.13/ext/pdo_oci
+RUN phpize && \
+    ./configure --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 && \
+    make && \
+    make install && \
+    echo extension=pdo_oci.so > /usr/local/etc/php/conf.d/pdo_oci.ini && \
+    php -v
+
+VOLUME /etc/tnsnames.ora
+
+RUN apt-get update && apt-get install -y
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        zlib1g-dev \
+        libxml2-dev \
+        libzip-dev \ 
+        libpq-dev \
+        build-essential  \ 
+        libaio1 \ 
+        unzip \
+    && docker-php-ext-install \
+        zip \
+        intl \
+        mysqli \
+        pdo \ 
+        pdo_pgsql \
+        pdo_mysql 
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends libpq-dev \
+  && docker-php-ext-install mysqli pdo_pgsql pdo_mysql
+
+RUN curl -sS http://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+
+COPY app /var/www/app
+WORKDIR /var/www/app
+
+
+
+
+

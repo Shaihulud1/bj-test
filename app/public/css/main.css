@@ -1,0 +1,17 @@
+
+.pointer {
+    cursor: pointer;
+}
+.navbar {
+    color: #fff
+}
+.content-wrapper {
+    margin-top: 100px;
+}
+
+nav ul {
+    margin-left: 20vw;
+}
+.modal-group {
+    margin-top: 20px;
+}
