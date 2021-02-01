@@ -4,16 +4,16 @@
             <thead>
                 <tr>
                     <th scope="col">
-                        <a class="sort pointer" @click="getTodoList(page, 'name')">имя пользователя</a>
+                        <a class="sort pointer" @click="sorting('name')">имя пользователя</a>
                     </th>
                     <th scope="col">
-                        <a class="sort pointer" @click="getTodoList(page, 'email')">email</a>
+                        <a class="sort pointer" @click="sorting('email')">email</a>
                     </th>
                     <th scope="col">
-                        <a class="sort pointer" @click="getTodoList(page, 'text')">текст</a>
+                        <a class="sort pointer" @click="sorting('text')">текст</a>
                     </th>
                     <th scope="col">
-                        <a class="sort pointer" @click="getTodoList(page, 'isDone')">статус</a>    
+                        <a class="sort pointer" @click="sorting('isDone')">статус</a>    
                     </th>
                     <?if ($_SESSION['role'] == 'admin') {?>
                         <th scope="col"></th>

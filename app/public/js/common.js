@@ -24,14 +24,17 @@ if (document.getElementById('todo-list')) {
             tasks: [],
             page: 1,
             sortDir: 'asc',
+            sortField: 'name',
         },
         methods: {
-            getTodoList: async function(page = 1, sortField=false) {
+            sorting: async function (field) {   
+                this.sortField = field
+                this.sortDir = this.sortDir == 'asc' ? 'desc' : 'asc'
+                await this.getTodoList(this.page)
+            },
+            getTodoList: async function(page = 1) {
                 let url = "/todo/list?page=" + page
-                if (sortField) {
-                    this.sortDir = this.sortDir == 'desc' ? 'asc' : 'desc'
-                    url += "&sortDir=" + this.sortDir + "&sortField=" + sortField
-                }
+                url += "&sortDir=" + this.sortDir + "&sortField=" + this.sortField
                 this.page = page
                 let res = await fetch(url)
                 this.tasks = await res.json()

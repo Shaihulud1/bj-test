@@ -84,11 +84,11 @@ class Todo extends AppController
         if (!empty($errors)) {
             $result['success'] = false;  
         } else {
+            $task->updatedByAdmin = $text != $task->text ? 1 : 0;
             $task->email = $email;
             $task->name = $name;
             $task->isDone = $isDone;
             $task->text = $text;
-            $task->updatedByAdmin = 1;
             $task->save();
             $result['success'] = true;            
         }
